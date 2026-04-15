@@ -1,4 +1,5 @@
 // swift-tools-version:5.3
+
 import PackageDescription
 
 let package = Package(
@@ -6,42 +7,59 @@ let package = Package(
     products: [
         .library(name: "TreeSitterIni", targets: ["TreeSitterIni"]),
     ],
-    dependencies: [],
-    targets: [
-        .target(name: "TreeSitterIni",
-                path: ".",
-                exclude: [
-                    "Cargo.toml",
-                    "Makefile",
-                    "binding.gyp",
-                    "bindings/c",
-                    "bindings/go",
-                    "bindings/node",
-                    "bindings/python",
-                    "bindings/rust",
-                    "prebuilds",
-                    "grammar.js",
-                    "package.json",
-                    "package-lock.json",
-                    "pyproject.toml",
-                    "setup.py",
-                    "test",
-                    "examples",
-                    ".editorconfig",
-                    ".github",
-                    ".gitignore",
-                    ".gitattributes",
-                    ".gitmodules",
-                ],
-                sources: [
-                    "src/parser.c",
-                    // NOTE: if your language has an external scanner, add it here.
-                ],
-                resources: [
-                    .copy("queries")
-                ],
-                publicHeadersPath: "bindings/swift",
-                cSettings: [.headerSearchPath("src")])
+    dependencies: [
+        .package(name: "SwiftTreeSitter", url: "https://github.com/tree-sitter/swift-tree-sitter", from: "0.9.0"),
     ],
-    cLanguageStandard: .c11
+    targets: [
+        .target(
+            name: "TreeSitterIni",
+            dependencies: [],
+            path: ".",
+            exclude: [
+                "binding.gyp",
+                "bindings/c",
+                "bindings/go",
+                "bindings/node",
+                "bindings/python",
+                "bindings/rust",
+                "Cargo.toml",
+                "Cargo.lock",
+                "CMakeLists.txt",
+                "go.mod",
+                "grammar.js",
+                "LICENSE",
+                "Makefile",
+                "notes.md",
+                "package-lock.json",
+                "package.json",
+                "pyproject.toml",
+                "README.md",
+                "setup.py",
+                "test",
+                "test-awsconfig",
+                "tree-sitter.json",
+                "src/grammar.json",
+                "src/node-types.json",
+                ".editorconfig",
+                ".gitattributes",
+            ],
+            sources: [
+                "src/parser.c",
+            ],
+            resources: [
+                .copy("queries"),
+            ],
+            publicHeadersPath: "bindings/swift",
+            cSettings: [.headerSearchPath("src")],
+        ),
+        .testTarget(
+            name: "TreeSitterIniTests",
+            dependencies: [
+                "SwiftTreeSitter",
+                "TreeSitterIni",
+            ],
+            path: "bindings/swift/TreeSitterIniTests",
+        ),
+    ],
+    cLanguageStandard: .c11,
 )
